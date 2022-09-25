@@ -1,23 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { db } from "./firebase";
+import { uid } from "uid";
+import { set, ref } from "firebase/database";
+import { useState, useEffect } from "react";
 
 function App() {
+  const [todo, setTodo] = useState("");
+
+  const handleTodoChange = (e) => {
+    setTodo(e.target.value);
+  };
+
+  const writeToDatabase = () => {
+    const uuid = uid();
+    set(ref(db, `/${uuid}`), {
+      todo,
+      uuid,
+    });
+
+    setTodo("");
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <input type="text" value={todo} onChange={handleTodoChange} />
+      <button onClick={writeToDatabase}>Enviar</button>
     </div>
   );
 }
